@@ -35,32 +35,28 @@ if __name__=="__main__":
     from pyglet.window import key
     from time import sleep
 
-  manualAction = [0, 0, 0] # forward, backward, jump
-  otherManualAction = [0, 0, 0]
+  manualAction = [0, 0] # up, down
+  otherManualAction = [0, 0]
   manualMode = False
   otherManualMode = False
 
   # taken from https://github.com/openai/gym/blob/master/gym/envs/box2d/car_racing.py
   def key_press(k, mod):
     global manualMode, manualAction, otherManualMode, otherManualAction
-    if k == key.LEFT:  manualAction[0] = 1
-    if k == key.RIGHT: manualAction[1] = 1
-    if k == key.UP:    manualAction[2] = 1
-    if (k == key.LEFT or k == key.RIGHT or k == key.UP): manualMode = True
+    if k == key.UP:    manualAction[0] = 1
+    if k == key.DOWN:  manualAction[1] = 1
+    if (k == key.DOWN or k == key.UP): manualMode = True
 
-    if k == key.D:     otherManualAction[0] = 1
-    if k == key.A:     otherManualAction[1] = 1
-    if k == key.W:     otherManualAction[2] = 1
-    if (k == key.D or k == key.A or k == key.W): otherManualMode = True
+    if k == key.W:     otherManualAction[0] = 1
+    if k == key.D:     otherManualAction[1] = 1
+    if (k == key.D or k == key.W): otherManualMode = True
 
   def key_release(k, mod):
     global manualMode, manualAction, otherManualMode, otherManualAction
-    if k == key.LEFT:  manualAction[0] = 0
-    if k == key.RIGHT: manualAction[1] = 0
-    if k == key.UP:    manualAction[2] = 0
-    if k == key.D:     otherManualAction[0] = 0
-    if k == key.A:     otherManualAction[1] = 0
-    if k == key.W:     otherManualAction[2] = 0
+    if k == key.UP:    manualAction[1] = 0
+    if k == key.DOWN:  manualAction[0] = 0
+    if k == key.W:     otherManualAction[0] = 0
+    if k == key.D:     otherManualAction[1] = 0
 
   policy = pong.BaselinePolicy() # defaults to use RNN Baseline for player
 
@@ -76,7 +72,7 @@ if __name__=="__main__":
 
   steps = 0
   total_reward = 0
-  action = np.array([0, 0, 0])
+  action = np.array([0, 0])
 
   done = False
 

@@ -39,7 +39,6 @@ TIMESTEP = 1/30.
 NUDGE = 0.1
 FRICTION = 1.0 # 1 means no FRICTION, less means FRICTION
 INIT_DELAY_FRAMES = 30
-GRAVITY = -9.8*2*1.5
 
 MAX_LIVES = 5 # game ends when one agent wins this many rounds
 
@@ -145,7 +144,7 @@ def circle(canvas, x, y, r, color):
   return canvas
 
 class Particle:
-  """ used for the ball, and also for the round stub above the fence """
+  """ used for the ball """
   def __init__(self, x, y, vx, vy, r, c):
     self.x = x
     self.y = y
@@ -296,32 +295,23 @@ class Agent:
   def lives(self):
     return self.life
   def setAction(self, action):
-    forward = False
-    backward = False
-    jump = False
+    up = False
+    down = False
     if action[0] > 0:
-      forward = True
+      up = True
     if action[1] > 0:
-      backward = True
-    if action[2] > 0:
-      jump = True
+      down = True
     self.desired_vx = 0
     self.desired_vy = 0
-    if (forward and (not backward)):
-      self.desired_vx = -PLAYER_SPEED_X
-    if (backward and (not forward)):
-      self.desired_vx = PLAYER_SPEED_X
-    if jump:
-      self.desired_vy = PLAYER_SPEED_Y
+    if (up and (not down)):
+      self.desired_vy = -PLAYER_SPEED_X
+    if (down and (not up)):
+      self.desired_vy = PLAYER_SPEED_X
   def move(self):
-    self.x += self.vx * TIMESTEP
     self.y += self.vy * TIMESTEP
   def step(self):
-    self.x += self.vx * TIMESTEP
     self.y += self.vy * TIMESTEP
   def update(self):
-    self.vy += GRAVITY * TIMESTEP
-
     if (self.y <= REF_U + NUDGE*TIMESTEP):
       self.vy = self.desired_vy
 
@@ -364,28 +354,8 @@ class Agent:
   def display(self, canvas, bx, by):
     x = self.x
     y = self.y
-    r = self.r
 
-    angle = math.pi * 60 / 180
-    if self.dir == 1:
-      angle = math.pi * 120 / 180
-    eyeX = 0
-    eyeY = 0
-
-    canvas = half_circle(canvas, toX(x), toY(y), toP(r), color=self.c)
-
-    # track ball with eyes (replace with observed info later):
-    c = math.cos(angle)
-    s = math.sin(angle)
-    ballX = bx-(x+(0.6)*r*c);
-    ballY = by-(y+(0.6)*r*s);
-
-    dist = math.sqrt(ballX*ballX+ballY*ballY)
-    eyeX = ballX/dist
-    eyeY = ballY/dist
-
-    canvas = circle(canvas, toX(x+(0.6)*r*c), toY(y+(0.6)*r*s), toP(r)*0.3, color=(255, 255, 255))
-    canvas = circle(canvas, toX(x+(0.6)*r*c+eyeX*0.15*r), toY(y+(0.6)*r*s+eyeY*0.15*r), toP(r)*0.1, color=(0, 0, 0))
+    canvas = rect(canvas, toX(x), toY(y) + 100, 10, 100, color=self.c)
 
     # draw coins (lives) left
     for i in range(1, self.life):
@@ -492,7 +462,6 @@ class Game:
     self.agent_right.update()
 
     if self.delayScreen.status():
-      self.ball.applyAcceleration(0, GRAVITY)
       self.ball.limitSpeed(0, MAX_BALL_SPEED)
       self.ball.move()
 
