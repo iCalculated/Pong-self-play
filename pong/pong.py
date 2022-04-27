@@ -167,18 +167,17 @@ class Particle:
     if (self.x<=(self.r-REF_W/2)):
       self.vx *= -FRICTION
       self.x = self.r-REF_W/2+NUDGE*TIMESTEP
+      return -1
 
     if (self.x >= (REF_W/2-self.r)):
       self.vx *= -FRICTION;
       self.x = REF_W/2-self.r-NUDGE*TIMESTEP
+      return 1
 
-    if (self.y<=(self.r+REF_U)):
+    if (self.y<=(self.r)):
       self.vy *= -FRICTION
-      self.y = self.r+REF_U+NUDGE*TIMESTEP
-      if (self.x <= 0):
-        return -1
-      else:
-        return 1
+      self.y = self.r+NUDGE*TIMESTEP
+
     if (self.y >= (REF_H-self.r)):
       self.vy *= -FRICTION
       self.y = REF_H-self.r-NUDGE*TIMESTEP
@@ -305,12 +304,11 @@ class Agent:
     self.y += self.vy * TIMESTEP
   def update(self):
     self.vy = self.desired_vy
-    print(self.y)
 
     self.move()
 
-    if (self.y <= 0):
-      self.y = 0;
+    if (self.y <= 4):
+      self.y = 4;
       self.vy = 0;
 
     if (self.y >= 20):
@@ -353,7 +351,7 @@ class Agent:
 
     # draw coins (lives) left
     for i in range(1, self.life):
-      canvas = circle(canvas, toX(self.dir*(REF_W/2+0.5-i*2.)), WINDOW_HEIGHT-toY(1.5), toP(0.5), color=COIN_COLOR)
+      canvas = circle(canvas, toX(self.dir*(REF_W/3+0.5-i*2.)), WINDOW_HEIGHT-toY(1.5), toP(0.5), color=COIN_COLOR)
 
     return canvas
 
@@ -429,8 +427,8 @@ class Game:
     self.np_random = np_random
     self.reset()
   def reset(self):
-    ball_vx = 0#self.np_random.uniform(low=-20, high=20)
-    ball_vy = 0#self.np_random.uniform(low=10, high=25)
+    ball_vx = self.np_random.uniform(low=-20, high=20)/10
+    ball_vy = self.np_random.uniform(low=10, high=25)
     self.ball = Particle(0, REF_W/4, ball_vx, ball_vy, 0.5, c=BALL_COLOR);
     self.agent_left = Agent(-1, -REF_W/2, REF_H/2, c=AGENT_LEFT_COLOR)
     self.agent_right = Agent(1, REF_W/2, REF_H/2, c=AGENT_RIGHT_COLOR)
