@@ -28,7 +28,7 @@ np.set_printoptions(threshold=20, precision=3, suppress=True, linewidth=200)
 RENDER_MODE = True
 
 REF_W = 24*2
-REF_H = REF_W
+REF_H = 10*2
 REF_U = 1.5 # ground height
 REF_WALL_WIDTH = 1.0 # wall width
 REF_WALL_HEIGHT = 3.5
@@ -51,15 +51,16 @@ PIXEL_WIDTH = 84*2*1
 PIXEL_HEIGHT = 84*1
 
 # COLORS
+PASTEL_BLUE = (121, 159, 203)
+PASTEL_RED = (249, 102, 94)
+BLUE_GREY = (34, 39, 44)
+LIGHT_GREY = (141, 141, 170)
 
-BALL_COLOR = (217, 79, 0)
-AGENT_LEFT_COLOR = (35, 93, 188)
-AGENT_RIGHT_COLOR = (255, 236, 0)
-PIXEL_AGENT_LEFT_COLOR = (255, 191, 0) # AMBER
-PIXEL_AGENT_RIGHT_COLOR = (255, 191, 0) # AMBER
-
-BACKGROUND_COLOR = (11, 16, 19)
-COIN_COLOR = (102, 56, 35)
+AGENT_LEFT_COLOR = PASTEL_BLUE
+AGENT_RIGHT_COLOR = PASTEL_RED
+BACKGROUND_COLOR = BLUE_GREY
+BALL_COLOR = LIGHT_GREY
+COIN_COLOR = LIGHT_GREY
 GROUND_COLOR = (116, 114, 117)
 
 # by default, don't load rendering (since we want to use it in headless cloud machines)
@@ -347,7 +348,8 @@ class Agent:
     x = self.x
     y = self.y
 
-    canvas = rect(canvas, toX(x), toY(y) + 100, 10, 100, color=self.c)
+    print(self.c)
+    canvas = rect(canvas, toX(x), toY(y), 10, 100, color=self.c)
 
     # draw coins (lives) left
     for i in range(1, self.life):
@@ -432,8 +434,8 @@ class Game:
     ball_vx = self.np_random.uniform(low=-20, high=20)
     ball_vy = self.np_random.uniform(low=10, high=25)
     self.ball = Particle(0, REF_W/4, ball_vx, ball_vy, 0.5, c=BALL_COLOR);
-    self.agent_left = Agent(-1, -REF_W/4, 1.5, c=AGENT_LEFT_COLOR)
-    self.agent_right = Agent(1, REF_W/4, 1.5, c=AGENT_RIGHT_COLOR)
+    self.agent_left = Agent(-1, -REF_W/2, REF_H/2, c=AGENT_LEFT_COLOR)
+    self.agent_right = Agent(1, REF_W/2, REF_H/2, c=AGENT_RIGHT_COLOR)
     self.agent_left.updateState(self.ball, self.agent_right)
     self.agent_right.updateState(self.ball, self.agent_left)
     self.delayScreen = DelayScreen()
