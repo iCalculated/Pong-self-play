@@ -22,13 +22,13 @@ if __name__=="__main__":
 
   Humans can override controls:
 
-  blue Agent:
-  W - Jump
-  A - Left
-  D - Right
+  Blue Agent:
+  W - Up
+  D - Down
 
   Yellow Agent:
-  Up Arrow, Left Arrow, Right Arrow
+  W - Up
+  D - Down
   """
 
   if RENDER_MODE:
@@ -53,8 +53,8 @@ if __name__=="__main__":
 
   def key_release(k, mod):
     global manualMode, manualAction, otherManualMode, otherManualAction
-    if k == key.UP:    manualAction[1] = 0
-    if k == key.DOWN:  manualAction[0] = 0
+    if k == key.UP:    manualAction[0] = 0
+    if k == key.DOWN:  manualAction[1] = 0
     if k == key.W:     otherManualAction[0] = 0
     if k == key.D:     otherManualAction[1] = 0
 

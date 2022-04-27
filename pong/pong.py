@@ -59,8 +59,7 @@ PIXEL_AGENT_LEFT_COLOR = (255, 191, 0) # AMBER
 PIXEL_AGENT_RIGHT_COLOR = (255, 191, 0) # AMBER
 
 BACKGROUND_COLOR = (11, 16, 19)
-FENCE_COLOR = (102, 56, 35)
-COIN_COLOR = FENCE_COLOR
+COIN_COLOR = (102, 56, 35)
 GROUND_COLOR = (116, 114, 117)
 
 # by default, don't load rendering (since we want to use it in headless cloud machines)
@@ -161,6 +160,7 @@ class Particle:
     self.prev_y = self.y
     self.x += self.vx * TIMESTEP
     self.y += self.vy * TIMESTEP
+  # TODO: implement acceleration
   def applyAcceleration(self, ax, ay):
     self.vx += ax * TIMESTEP
     self.vy += ay * TIMESTEP
@@ -183,14 +183,6 @@ class Particle:
     if (self.y >= (REF_H-self.r)):
       self.vy *= -FRICTION
       self.y = REF_H-self.r-NUDGE*TIMESTEP
-    # fence:
-    if ((self.x <= (REF_WALL_WIDTH/2+self.r)) and (self.prev_x > (REF_WALL_WIDTH/2+self.r)) and (self.y <= REF_WALL_HEIGHT)):
-      self.vx *= -FRICTION
-      self.x = REF_WALL_WIDTH/2+self.r+NUDGE*TIMESTEP
-
-    if ((self.x >= (-REF_WALL_WIDTH/2-self.r)) and (self.prev_x < (-REF_WALL_WIDTH/2-self.r)) and (self.y <= REF_WALL_HEIGHT)):
-      self.vx *= -FRICTION
-      self.x = -REF_WALL_WIDTH/2-self.r-NUDGE*TIMESTEP
     return 0;
   def getDist2(self, p): # returns distance squared from p
     dy = p.y - self.y
@@ -295,27 +287,27 @@ class Agent:
   def lives(self):
     return self.life
   def setAction(self, action):
+    print(action)
     up = False
     down = False
     if action[0] > 0:
       up = True
     if action[1] > 0:
       down = True
-    self.desired_vx = 0
     self.desired_vy = 0
     if (up and (not down)):
-      self.desired_vy = -PLAYER_SPEED_X
+      self.desired_vy = PLAYER_SPEED_Y
+      print("going up")
     if (down and (not up)):
-      self.desired_vy = PLAYER_SPEED_X
+      self.desired_vy = -PLAYER_SPEED_Y
+      print("going down")
+    print(self.desired_vy)
   def move(self):
     self.y += self.vy * TIMESTEP
   def step(self):
     self.y += self.vy * TIMESTEP
   def update(self):
-    if (self.y <= REF_U + NUDGE*TIMESTEP):
-      self.vy = self.desired_vy
-
-    self.vx = self.desired_vx*self.dir
+    self.vy = self.desired_vy
 
     self.move()
 
@@ -430,8 +422,6 @@ class Game:
   def __init__(self, np_random=np.random):
     self.ball = None
     self.ground = None
-    self.fence = None
-    self.fenceStub = None
     self.agent_left = None
     self.agent_right = None
     self.delayScreen = None
@@ -439,8 +429,6 @@ class Game:
     self.reset()
   def reset(self):
     self.ground = Wall(0, 0.75, REF_W, REF_U, c=GROUND_COLOR)
-    self.fence = Wall(0, 0.75 + REF_WALL_HEIGHT/2, REF_WALL_WIDTH, (REF_WALL_HEIGHT-1.5), c=FENCE_COLOR)
-    self.fenceStub = Particle(0, REF_WALL_HEIGHT, 0, 0, REF_WALL_WIDTH/2, c=FENCE_COLOR);
     ball_vx = self.np_random.uniform(low=-20, high=20)
     ball_vy = self.np_random.uniform(low=10, high=25)
     self.ball = Particle(0, REF_W/4, ball_vx, ball_vy, 0.5, c=BALL_COLOR);
@@ -469,8 +457,6 @@ class Game:
       self.ball.bounce(self.agent_left)
     if (self.ball.isColliding(self.agent_right)):
       self.ball.bounce(self.agent_right)
-    if (self.ball.isColliding(self.fenceStub)):
-      self.ball.bounce(self.fenceStub)
 
     # negated, since we want reward to be from the persepctive of right agent being trained.
     result = -self.ball.checkEdges()
@@ -492,8 +478,6 @@ class Game:
     # background color
     # canvas is viewer object
     canvas = create_canvas(canvas, c=BACKGROUND_COLOR)
-    canvas = self.fence.display(canvas)
-    canvas = self.fenceStub.display(canvas)
     canvas = self.agent_left.display(canvas, self.ball.x, self.ball.y)
     canvas = self.agent_right.display(canvas, self.ball.x, self.ball.y)
     canvas = self.ball.display(canvas)
