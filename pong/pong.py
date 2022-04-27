@@ -288,7 +288,6 @@ class Agent:
   def lives(self):
     return self.life
   def setAction(self, action):
-    print(action)
     up = False
     down = False
     if action[0] > 0:
@@ -298,11 +297,8 @@ class Agent:
     self.desired_vy = 0
     if (up and (not down)):
       self.desired_vy = PLAYER_SPEED_Y
-      print("going up")
     if (down and (not up)):
       self.desired_vy = -PLAYER_SPEED_Y
-      print("going down")
-    print(self.desired_vy)
   def move(self):
     self.y += self.vy * TIMESTEP
   def step(self):
@@ -348,7 +344,6 @@ class Agent:
     x = self.x
     y = self.y
 
-    print(self.c)
     canvas = rect(canvas, toX(x), toY(y), 10, 100, color=self.c)
 
     # draw coins (lives) left
@@ -700,51 +695,46 @@ if __name__=="__main__":
 
   Humans can override controls:
 
-  left Agent:
-  W - Jump
-  A - Left
-  D - Right
+  Blue Agent:
+  W - Up
+  D - Down
 
-  right Agent:
-  Up Arrow, Left Arrow, Right Arrow
+  Yellow Agent:
+  W - Up
+  D - Down
   """
 
   if RENDER_MODE:
     from pyglet.window import key
     from time import sleep
 
-  manualAction = [0, 0, 0] # forward, backward, jump
-  otherManualAction = [0, 0, 0]
+  manualAction = [0, 0] # up, down
+  otherManualAction = [0, 0]
   manualMode = False
   otherManualMode = False
 
   # taken from https://github.com/openai/gym/blob/master/gym/envs/box2d/car_racing.py
   def key_press(k, mod):
     global manualMode, manualAction, otherManualMode, otherManualAction
-    if k == key.LEFT:  manualAction[0] = 1
-    if k == key.RIGHT: manualAction[1] = 1
-    if k == key.UP:    manualAction[2] = 1
-    if (k == key.LEFT or k == key.RIGHT or k == key.UP): manualMode = True
+    if k == key.UP:    manualAction[0] = 1
+    if k == key.DOWN:  manualAction[1] = 1
+    if (k == key.DOWN or k == key.UP): manualMode = True
 
-    if k == key.D:     otherManualAction[0] = 1
-    if k == key.A:     otherManualAction[1] = 1
-    if k == key.W:     otherManualAction[2] = 1
-    if (k == key.D or k == key.A or k == key.W): otherManualMode = True
+    if k == key.W:     otherManualAction[0] = 1
+    if k == key.D:     otherManualAction[1] = 1
+    if (k == key.D or k == key.W): otherManualMode = True
 
   def key_release(k, mod):
     global manualMode, manualAction, otherManualMode, otherManualAction
-    if k == key.LEFT:  manualAction[0] = 0
-    if k == key.RIGHT: manualAction[1] = 0
-    if k == key.UP:    manualAction[2] = 0
-    if k == key.D:     otherManualAction[0] = 0
-    if k == key.A:     otherManualAction[1] = 0
-    if k == key.W:     otherManualAction[2] = 0
+    if k == key.UP:    manualAction[0] = 0
+    if k == key.DOWN:  manualAction[1] = 0
+    if k == key.W:     otherManualAction[0] = 0
+    if k == key.D:     otherManualAction[1] = 0
 
   policy = BaselinePolicy() # defaults to use RNN Baseline for player
 
   env = SlimeVolleyEnv()
   env.seed(np.random.randint(0, 10000))
-  #env.seed(721)
 
   if RENDER_MODE:
     env.render()
@@ -785,7 +775,7 @@ if __name__=="__main__":
 
     # make the game go slower for human players to be fair to humans.
     if (manualMode or otherManualMode):
-      sleep(0.02)
+      sleep(0.01)
 
   env.close()
   print("cumulative score", total_reward)
