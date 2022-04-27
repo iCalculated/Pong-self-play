@@ -29,7 +29,6 @@ RENDER_MODE = True
 
 REF_W = 24*2
 REF_H = 10*2
-REF_U = 1.5 # ground height
 REF_WALL_WIDTH = 1.0 # wall width
 REF_WALL_HEIGHT = 3.5
 PLAYER_SPEED_X = 10*1.75
@@ -61,7 +60,6 @@ AGENT_RIGHT_COLOR = PASTEL_RED
 BACKGROUND_COLOR = BLUE_GREY
 BALL_COLOR = LIGHT_GREY
 COIN_COLOR = LIGHT_GREY
-GROUND_COLOR = (116, 114, 117)
 
 # by default, don't load rendering (since we want to use it in headless cloud machines)
 rendering = None
@@ -231,7 +229,7 @@ class Particle:
       self.vy *= minSpeed
 
 class Wall:
-  """ used for the fence, and also the ground """
+  """ deprecated """
   def __init__(self, x, y, w, h, c):
     self.x = x;
     self.y = y;
@@ -278,6 +276,8 @@ class Agent:
     self.x = x
     self.y = y
     self.r = 1.5
+    self.w = 10
+    self.h = 100
     self.c = c
     self.vx = 0
     self.vy = 0
@@ -305,11 +305,16 @@ class Agent:
     self.y += self.vy * TIMESTEP
   def update(self):
     self.vy = self.desired_vy
+    print(self.y)
 
     self.move()
 
-    if (self.y <= REF_U):
-      self.y = REF_U;
+    if (self.y <= 0):
+      self.y = 0;
+      self.vy = 0;
+
+    if (self.y >= 20):
+      self.y = 20; # can set to 0 for infinite scroll
       self.vy = 0;
 
     # stay in their own half:
@@ -344,7 +349,7 @@ class Agent:
     x = self.x
     y = self.y
 
-    canvas = rect(canvas, toX(x), toY(y), 10, 100, color=self.c)
+    canvas = rect(canvas, toX(x), toY(y), self.w, self.h, color=self.c)
 
     # draw coins (lives) left
     for i in range(1, self.life):
@@ -418,16 +423,14 @@ class Game:
   """
   def __init__(self, np_random=np.random):
     self.ball = None
-    self.ground = None
     self.agent_left = None
     self.agent_right = None
     self.delayScreen = None
     self.np_random = np_random
     self.reset()
   def reset(self):
-    self.ground = Wall(0, 0.75, REF_W, REF_U, c=GROUND_COLOR)
-    ball_vx = self.np_random.uniform(low=-20, high=20)
-    ball_vy = self.np_random.uniform(low=10, high=25)
+    ball_vx = 0#self.np_random.uniform(low=-20, high=20)
+    ball_vy = 0#self.np_random.uniform(low=10, high=25)
     self.ball = Particle(0, REF_W/4, ball_vx, ball_vy, 0.5, c=BALL_COLOR);
     self.agent_left = Agent(-1, -REF_W/2, REF_H/2, c=AGENT_LEFT_COLOR)
     self.agent_right = Agent(1, REF_W/2, REF_H/2, c=AGENT_RIGHT_COLOR)
@@ -478,7 +481,6 @@ class Game:
     canvas = self.agent_left.display(canvas, self.ball.x, self.ball.y)
     canvas = self.agent_right.display(canvas, self.ball.x, self.ball.y)
     canvas = self.ball.display(canvas)
-    canvas = self.ground.display(canvas)
     return canvas
   def betweenGameControl(self):
     agent = [self.agent_left, self.agent_right]
