@@ -1,17 +1,3 @@
-"""
-Port of Neural Slime Volleyball to Python Gym Environment
-
-David Ha (2020)
-
-Original version:
-
-https://otoro.net/slimevolley
-https://blog.otoro.net/2015/03/28/neural-slime-volleyball/
-https://github.com/hardmaru/neuralslimevolley
-
-No dependencies apart from Numpy and Gym
-"""
-
 import logging
 import math
 import gym
@@ -199,6 +185,8 @@ class Particle:
     self.vy += p.vy / 2
     self.vx *= 1.1
     self.vy *= 1.1
+    while(self.isColliding(p)):
+      self.x -= NUDGE * np.sign(self.x)
     return 
     # circular collission (original scheme to make bouncing interesting)
     abd = math.sqrt(abx*abx+aby*aby)
