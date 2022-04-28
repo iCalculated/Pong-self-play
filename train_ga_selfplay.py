@@ -11,7 +11,7 @@ from pong.mlp import Model
 from pong import multiagent_rollout as rollout
 
 # Settings
-random_seed = 612
+random_seed = 62
 population_size = 128
 total_tournaments = 500000
 save_freq = 1000
