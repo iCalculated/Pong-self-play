@@ -351,6 +351,10 @@ class Agent:
       canvas = circle(canvas, toX(self.dir*(REF_W/3+0.5-i*2.)), WINDOW_HEIGHT-toY(1.5), toP(0.5), color=COIN_COLOR)
 
     return canvas
+
+class BaselinePolicy:
+  def predict(self, obs):
+    return [1,0] if obs[1] - 0.2 < obs[5] else [0,1]
 class Game:
   """
   the main slime volley game.
@@ -486,8 +490,8 @@ class PongEnv(gym.Env):
     self.game = Game()
     self.ale = self.game.agent_right # for compatibility for some models that need the self.ale.lives() function
 
-    self.policy = mlp.Model(mlp.games['pong']) 
-    self.policy.load_model("ga_selfplay/ga_00100000.json") # the “bad guy”
+    self.policy = BaselinePolicy()
+    #self.policy.load_model("ga_selfplay/ga_00100000.json") # the “bad guy”
 
     self.viewer = None
 
