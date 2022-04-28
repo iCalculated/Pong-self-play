@@ -555,7 +555,7 @@ class PongEnv(gym.Env):
     self.ale = self.game.agent_right # for compatibility for some models that need the self.ale.lives() function
 
     self.policy = mlp.Model(mlp.games['pong']) 
-    self.policy.load_model("ga_selfplay/ga_00075000.json") # the “bad guy”
+    self.policy.load_model("ga_selfplay/ga_00100000.json") # the “bad guy”
 
     self.viewer = None
 
