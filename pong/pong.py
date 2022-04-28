@@ -673,8 +673,6 @@ def multiagent_rollout(env, policy_right, policy_left, render_mode=False):
 
     # uses a 2nd (optional) parameter for step to put in the other action
     # and returns the other observation in the 4th optional "info" param in gym's step()
-    print(action_right, action_left)
-    print(type(action_right), type(action_left))
     obs_right, reward, done, info = env.step(action_right, action_left)
     obs_left = info['otherObs']
 
