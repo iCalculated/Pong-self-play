@@ -97,7 +97,7 @@ def evaluate_multiagent(env, policy0, policy1, render_mode=False, n_trials=1000,
 
 if __name__=="__main__":
 
-  APPROVED_MODELS = ["baseline", "ppo", "ga", "ga_old", "random"]
+  APPROVED_MODELS = ["baseline", "ppo", "ga", "ga_transfer", "random"]
 
   def checkchoice(choice):
     choice = choice.lower()
@@ -108,8 +108,8 @@ if __name__=="__main__":
   PATH = {
     "baseline": None,
     "ppo": "ppo1_selfplay/best_model.zip",
-    "ga": "ga_selfplay_random/ga_00100000.json",
-    "ga_transfer": "ga_selfplay/ga_00100000.json",
+    "ga": "ga_selfplay/ga_00100000.json",
+    "ga_transfer": "ga_selfplay_random/ga_00100000.json",
     "random": None,
   }
 
@@ -117,14 +117,14 @@ if __name__=="__main__":
     "baseline": makeBaselinePolicy,
     "ppo": PPOPolicy,
     "ga": makePongPolicy,
-    "ga_old": makePongPolicy,
+    "ga_transfer": makePongPolicy,
     "random": RandomPolicy,
   }
 
   parser = argparse.ArgumentParser(description='Evaluate pre-trained agents against each other.')
-  parser.add_argument('--left', help='choice of (baseline, ppo, ga, ga_random, random)', type=str, default="baseline")
+  parser.add_argument('--left', help='choice of (baseline, ppo, ga, ga_transfer, random)', type=str, default="baseline")
   parser.add_argument('--leftpath', help='path to left model (leave blank for historical)', type=str, default="")
-  parser.add_argument('--right', help='choice of (baseline, ppo, ga, ga_random, random)', type=str, default="ga")
+  parser.add_argument('--right', help='choice of (baseline, ppo, ga, ga_transfer, random)', type=str, default="ga")
   parser.add_argument('--rightpath', help='path to right model (leave blank for historical)', type=str, default="")
   parser.add_argument('--render', action='store_true', help='render to screen?', default=False)
   parser.add_argument('--seed', help='random seed (integer)', type=int, default=721)
