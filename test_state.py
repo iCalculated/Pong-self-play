@@ -60,9 +60,9 @@ if __name__=="__main__":
     if k == key.W:     otherManualAction[0] = 0
     if k == key.D:     otherManualAction[1] = 0
 
-  #policy = pong.BaselinePolicy()
-  policy = Model(mlp.games['pong'])
-  policy.load_model("ga_selfplay/ga_00100000.json") # the “bad guy”
+  policy = pong.BaselinePolicy()
+  #policy = Model(mlp.games['pong'])
+  #policy.load_model("ga_selfplay/ga_00100000.json") # the “bad guy”
 
   env = gym.make("MLpong-v0")
   env.seed(np.random.randint(0, 10000))
