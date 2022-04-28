@@ -7,6 +7,7 @@ FPS (no-render): 100000 steps /7.956 seconds. 12.5K/s.
 import math
 import numpy as np
 import gym
+import pong
 import pong.mlp as mlp
 from pong.mlp import Model
 
@@ -59,8 +60,7 @@ if __name__=="__main__":
     if k == key.W:     otherManualAction[0] = 0
     if k == key.D:     otherManualAction[1] = 0
 
-  policy = mlp.Model(mlp.games['pong']) 
-  policy.load_model("ga_selfplay/ga_00100000.json") # the “bad guy”
+  policy = pong.BaselinePolicy()
 
   env = gym.make("MLpong-v0")
   env.seed(np.random.randint(0, 10000))
