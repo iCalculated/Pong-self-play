@@ -25,7 +25,7 @@ def mutate(length, mutation_rate, mutation_sigma):
   return mask * noise
 
 # Log results
-logdir = "ga_selfplay"
+logdir = "ga_selfplay_random"
 if not os.path.exists(logdir):
   os.makedirs(logdir)
 
@@ -34,7 +34,7 @@ if not os.path.exists(logdir):
 policy_left = Model(mlp.games['pong'])
 policy_right = Model(mlp.games['pong'])
 param_count = policy_left.param_count
-print("Number of parameters of the neural net policy:", param_count) # 273 for our MLP
+print("Number of parameters of the neural net policy:", param_count) # 262 for our MLP
 
 # store our population here
 population = np.random.normal(size=(population_size, param_count)) * 0.5 # each row is an agent.

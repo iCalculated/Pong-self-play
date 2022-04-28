@@ -19,6 +19,8 @@ from gym import spaces
 from gym.utils import seeding
 from gym.envs.registration import register
 import numpy as np
+import pong.mlp as mlp
+from pong.mlp import Model
 import cv2 # cursed import that breaks things if not present
 
 np.set_printoptions(threshold=20, precision=3, suppress=True, linewidth=200)
@@ -363,7 +365,6 @@ class Agent:
     return canvas
 
 class BaselinePolicy:
-  """ Tiny RNN policy with only 120 parameters of otoro.net/slimevolley agent """
   def __init__(self):
     self.nGameInput = 8 # 8 states for agent
     self.nGameOutput = 3 # 3 buttons (forward, backward, jump)
@@ -431,8 +432,8 @@ class Game:
     self.np_random = np_random
     self.reset()
   def reset(self):
-    ball_vx = self.np_random.uniform(low=5, high=10)
-    ball_vy = self.np_random.uniform(low=0, high=0)
+    ball_vx = self.np_random.uniform(low=7, high=10) * (1 if self.np_random.random() < 0.5 else -1)
+    ball_vy = self.np_random.uniform(low=7, high=10) * (1 if self.np_random.random() < 0.5 else -1)
     self.ball = Particle(0, REF_W/4, ball_vx, ball_vy, 0.5, c=BALL_COLOR);
     self.agent_left = Agent(-1, -REF_W/2, REF_H/2, c=AGENT_LEFT_COLOR)
     self.agent_right = Agent(1, REF_W/2, REF_H/2, c=AGENT_RIGHT_COLOR)
@@ -440,8 +441,8 @@ class Game:
     self.agent_right.updateState(self.ball, self.agent_left)
     self.delayScreen = DelayScreen()
   def newMatch(self):
-    ball_vx = self.np_random.uniform(low=5, high=10)
-    ball_vy = self.np_random.uniform(low=0, high=0)
+    ball_vx = self.np_random.uniform(low=7, high=10) * (1 if self.np_random.random() < 0.5 else -1)
+    ball_vy = self.np_random.uniform(low=7, high=10) * (1 if self.np_random.random() < 0.5 else -1)
     self.ball = Particle(0, REF_W/4, ball_vx, ball_vy, 0.5, c=BALL_COLOR);
     self.delayScreen.reset()
   def step(self):
@@ -553,7 +554,8 @@ class PongEnv(gym.Env):
     self.game = Game()
     self.ale = self.game.agent_right # for compatibility for some models that need the self.ale.lives() function
 
-    self.policy = BaselinePolicy() # the “bad guy”
+    self.policy = mlp.Model(mlp.games['pong']) 
+    self.policy.load_model("ga_selfplay/ga_00075000.json") # the “bad guy”
 
     self.viewer = None
 
@@ -735,7 +737,7 @@ if __name__=="__main__":
     if k == key.W:     otherManualAction[0] = 0
     if k == key.D:     otherManualAction[1] = 0
 
-  policy = BaselinePolicy() # defaults to use RNN Baseline for player
+  policy = Model(mlp.games['pong']) # defaults to use RNN Baseline for player
 
   env = PongEnv()
   env.seed(np.random.randint(0, 10000))
