@@ -187,11 +187,15 @@ class Particle:
     dx = p.x - self.x
     return (dx*dx+dy*dy)
   def isColliding(self, p): # returns true if it is colliding w/ p
-    r = self.r+p.r
-    return (r*r > self.getDist2(p)) # if distance is less than total radius, then colliding.
+    return self.y - self.r < p.y and self.y + self.r > p.y - p.h / FACTOR \
+        and self.x + self.r > p.x and self.x - self.r < p.x
+
   def bounce(self, p): # bounce two balls that have collided (this and that)
-    abx = self.x-p.x
-    aby = self.y-p.y
+    self.vx *= -1
+    aby = self.y-p.y+2
+    self.vy += aby
+    return 
+    # circular collission (original scheme to make bouncing interesting)
     abd = math.sqrt(abx*abx+aby*aby)
     abx /= abd # normalize
     aby /= abd
@@ -274,7 +278,7 @@ class Agent:
     self.dir = dir # -1 means left, 1 means right player for symmetry.
     self.x = x
     self.y = y
-    self.r = 1.5
+    self.r = 4
     self.w = 10
     self.h = 100
     self.c = c
@@ -398,16 +402,13 @@ class BaselinePolicy:
     self.inputState[0:self.nGameInput] = np.array([x, y, vx, vy, ball_x, ball_y, ball_vx, ball_vy])
     self.inputState[self.nGameInput:] = self.outputState
   def _getAction(self):
-    forward = 0
-    backward = 0
-    jump = 0
+    up = 0
+    down = 0
     if (self.outputState[0] > 0.75):
-      forward = 1
+      up = 1
     if (self.outputState[1] > 0.75):
-      backward = 1
-    if (self.outputState[2] > 0.75):
-      jump = 1
-    return [forward, backward, jump]
+      down = 1
+    return [up, down]
   def predict(self, obs):
     """ take obs, update rnn state, return action """
     self._setInputState(obs)
@@ -427,8 +428,8 @@ class Game:
     self.np_random = np_random
     self.reset()
   def reset(self):
-    ball_vx = self.np_random.uniform(low=-20, high=20)/10
-    ball_vy = self.np_random.uniform(low=10, high=25)
+    ball_vx = self.np_random.uniform(low=5, high=10)
+    ball_vy = self.np_random.uniform(low=0, high=0)
     self.ball = Particle(0, REF_W/4, ball_vx, ball_vy, 0.5, c=BALL_COLOR);
     self.agent_left = Agent(-1, -REF_W/2, REF_H/2, c=AGENT_LEFT_COLOR)
     self.agent_right = Agent(1, REF_W/2, REF_H/2, c=AGENT_RIGHT_COLOR)
@@ -436,8 +437,8 @@ class Game:
     self.agent_right.updateState(self.ball, self.agent_left)
     self.delayScreen = DelayScreen()
   def newMatch(self):
-    ball_vx = self.np_random.uniform(low=-20, high=20)
-    ball_vy = self.np_random.uniform(low=10, high=25)
+    ball_vx = self.np_random.uniform(low=5, high=10)
+    ball_vy = self.np_random.uniform(low=0, high=0)
     self.ball = Particle(0, REF_W/4, ball_vx, ball_vy, 0.5, c=BALL_COLOR);
     self.delayScreen.reset()
   def step(self):
@@ -483,7 +484,7 @@ class Game:
   def betweenGameControl(self):
     agent = [self.agent_left, self.agent_right]
 
-class SlimeVolleyEnv(gym.Env):
+class PongEnv(gym.Env):
   """
   Gym wrapper for our pong game.
 
@@ -686,7 +687,7 @@ def multiagent_rollout(env, policy_right, policy_left, render_mode=False):
 
 register(
     id='MLpong-v0',
-    entry_point='pong.pong:SlimeVolleyEnv'
+    entry_point='pong.pong:PongEnv'
 )
 
 if __name__=="__main__":
@@ -733,7 +734,7 @@ if __name__=="__main__":
 
   policy = BaselinePolicy() # defaults to use RNN Baseline for player
 
-  env = SlimeVolleyEnv()
+  env = PongEnv()
   env.seed(np.random.randint(0, 10000))
 
   if RENDER_MODE:
