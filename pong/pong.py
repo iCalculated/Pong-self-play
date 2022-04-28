@@ -434,7 +434,7 @@ class Game:
     ball_vx = self.np_random.uniform(low=5, high=10)
     ball_vy = self.np_random.uniform(low=0, high=0)
     self.ball = Particle(0, REF_W/4, ball_vx, ball_vy, 0.5, c=BALL_COLOR);
-    self.agent_left = Agent(-1, -REF_W/2, REF_H/2, c=AGENT_LEFT_COLOR)
+    self.agent_left = Agent(-1, -REF_W/2-20/FACTOR, REF_H/2, c=AGENT_LEFT_COLOR)
     self.agent_right = Agent(1, REF_W/2, REF_H/2, c=AGENT_RIGHT_COLOR)
     self.agent_left.updateState(self.ball, self.agent_right)
     self.agent_right.updateState(self.ball, self.agent_left)
