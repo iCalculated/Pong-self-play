@@ -492,7 +492,7 @@ class PongEnv(gym.Env):
 
     self.policy = BaselinePolicy()
     #self.policy = Model(mlp.games['pong'])
-    #self.policy.load_model("ga_selfplay_random/ga_00090000.json") # the “bad guy”
+    #self.policy.load_model("ga_selfplay_random/ga_00130000.json") # the “bad guy”
 
     self.viewer = None
 

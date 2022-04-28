@@ -109,7 +109,7 @@ if __name__=="__main__":
     "baseline": None,
     "ppo": "ppo1_selfplay/best_model.zip",
     "ga": "ga_selfplay_random/ga_00100000.json",
-    "ga_old": "ga_selfplay/ga_00100000.json",
+    "ga_transfer": "ga_selfplay/ga_00100000.json",
     "random": None,
   }
 
