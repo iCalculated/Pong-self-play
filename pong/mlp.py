@@ -12,38 +12,21 @@ Game = namedtuple('Game', ['env_name', 'time_factor', 'input_size', 'output_size
 
 games = {}
 
-games['slimevolley'] = Game(env_name='SlimeVolley',
+games['pong'] = Game(env_name='MLpong-v0',
   input_size=12,
-  output_size=3,
+  output_size=2,
   time_factor=0,
-  layers=[20, 20], # hidden size of 20x20 neurons
+  layers=[10, 10], # hidden size of 10x10 neurons
   activation='tanh',
   noise_bias=0.0,
   output_noise=[False, False, False],
   rnn_mode=False,
 )
 
-games['slimevolleylite'] = Game(env_name='SlimeVolley',
-  input_size=12,
-  output_size=3,
-  time_factor=0,
-  layers=[10, 10], # hidden size of 20x20 neurons
-  activation='tanh',
-  noise_bias=0.0,
-  output_noise=[False, False, False],
-  rnn_mode=False,
-)
-
-def makeSlimePolicy(filename):
-  model = Model(games['slimevolley']) 
+def makePongPolicy(filename):
+  model = Model(games['pong']) 
   model.load_model(filename)
   return model
-
-def makeSlimePolicyLite(filename):
-  model = Model(games['slimevolleylite']) 
-  model.load_model(filename)
-  return model
-
 
 class Model:
   ''' simple feedforward model '''
