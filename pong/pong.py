@@ -194,6 +194,7 @@ class Particle:
     self.vx *= -1
     aby = self.y-p.y+2
     self.vy += aby
+    self.vy += p.vy / 2
     return 
     # circular collission (original scheme to make bouncing interesting)
     abd = math.sqrt(abx*abx+aby*aby)
