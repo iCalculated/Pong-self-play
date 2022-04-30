@@ -25,7 +25,11 @@ def mutate(length, mutation_rate, mutation_sigma):
   return mask * noise
 
 # Log results
-logdir = "ga_selfplay_streak3"
+logdir = "ga_selfplay"
+index = 0
+while os.path.exists(logdir):
+    logdir += str(index)
+    index += 1
 if not os.path.exists(logdir):
   os.makedirs(logdir)
 
