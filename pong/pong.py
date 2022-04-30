@@ -717,7 +717,7 @@ if __name__=="__main__":
 
     if RENDER_MODE:
       env.render()
-      sleep(0.005)
+      #sleep(0.005)
 
     # make the game go slower for human players to be fair to humans.
     if (manualMode or otherManualMode):

@@ -16,7 +16,7 @@ games['pong'] = Game(env_name='MLpong-v0',
   input_size=12,
   output_size=2,
   time_factor=0,
-  layers=[10, 10], # hidden size of 10x10 neurons
+  layers=[20, 20], # hidden size of 10x10 neurons
   activation='tanh',
   noise_bias=0.0,
   output_noise=[False, False, False],

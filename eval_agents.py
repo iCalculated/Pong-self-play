@@ -86,7 +86,7 @@ def rollout(env, policy0, policy1, render_mode=False):
 
   return total_reward
 
-def evaluate_multiagent(env, policy0, policy1, render_mode=False, n_trials=1000, init_seed=721):
+def evaluate_multiagent(env, policy0, policy1, render_mode=False, n_trials=1000, init_seed=42):
   history = []
   for i in range(n_trials):
     env.seed(seed=init_seed+i)

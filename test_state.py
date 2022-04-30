@@ -101,7 +101,7 @@ if __name__=="__main__":
 
     if RENDER_MODE:
       env.render()
-      sleep(0.02) # 0.01
+      sleep(0.01)
 
   env.close()
   print("cumulative score", total_reward)
