@@ -27,10 +27,14 @@ def mutate(length, mutation_rate, mutation_sigma):
 # Log results
 logdir = "ga_selfplay"
 index = 0
-while os.path.exists(logdir):
+numbering = False
+while (os.path.exists(logdir) and not numbering) or os.path.exists(logdir + str(index)):
+  print(f"found existing dir, trying next {index+1}")
+  numbering = True
+  index += 1
+if (not numbering and not os.path.exists(logdir)) or (numbering and not os.path.exists(logdir + str(index))):
+  if numbering:
     logdir += str(index)
-    index += 1
-if not os.path.exists(logdir):
   os.makedirs(logdir)
 
 print(f"Logging to {logdir}")
