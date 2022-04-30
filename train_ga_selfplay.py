@@ -11,7 +11,7 @@ from pong.mlp import Model
 from pong import multiagent_rollout as rollout
 
 # Settings
-random_seed = 62
+random_seed = 42
 population_size = 128
 total_tournaments = 500000
 save_freq = 1000
@@ -25,7 +25,7 @@ def mutate(length, mutation_rate, mutation_sigma):
   return mask * noise
 
 # Log results
-logdir = "ga_selfplay_new"
+logdir = "ga_selfplay_streak3"
 if not os.path.exists(logdir):
   os.makedirs(logdir)
 
@@ -62,11 +62,11 @@ for tournament in range(1, total_tournaments+1):
     population[m] += np.random.normal(size=param_count) * 0.1
   if score > 0:
     population[m] = population[n] + np.random.normal(size=param_count) * 0.1
-    winning_streak[m] = winning_streak[n]
+    winning_streak[m] = 0
     winning_streak[n] += 1
   if score < 0:
     population[n] = population[m] + np.random.normal(size=param_count) * 0.1
-    winning_streak[n] = winning_streak[m]
+    winning_streak[n] = 0
     winning_streak[m] += 1
 
   if tournament % save_freq == 0:
