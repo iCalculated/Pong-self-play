@@ -33,6 +33,7 @@ while os.path.exists(logdir):
 if not os.path.exists(logdir):
   os.makedirs(logdir)
 
+print(f"Logging to {logdir}")
 
 # Create two instances of a feed forward policy we may need later.
 policy_left = Model(mlp.games['pong'])
