@@ -183,11 +183,14 @@ class Particle:
     aby = self.y-p.y+2
     self.vy += aby
     self.vy += p.vy / 2
-    self.vx *= 1.1
-    self.vy *= 1.1
+    if abs(self.vx) > 30:
+        self.xv = 30 * np.sign(self.vx)
+    else:
+        self.vx *= 1.1
+        self.vy *= 1.1
     while(self.isColliding(p)):
       self.x -= NUDGE * np.sign(self.x)
-    return 
+    return
     # circular collission (original scheme to make bouncing interesting)
     abd = math.sqrt(abx*abx+aby*aby)
     abx /= abd # normalize
@@ -368,7 +371,7 @@ class Game:
     self.np_random = np_random
     self.reset()
   def reset(self):
-    ball_vx = self.np_random.uniform(low=7, high=10) * (1 if self.np_random.random() < 0.5 else -1)
+    ball_vx = self.np_random.uniform(low=15, high=20) * (1 if self.np_random.random() < 0.5 else -1)
     ball_vy = self.np_random.uniform(low=-10, high=10)
     self.ball = Particle(0, REF_W/4, ball_vx, ball_vy, 0.5, c=BALL_COLOR);
     self.agent_left = Agent(-1, -REF_W/2, REF_H/2, c=AGENT_LEFT_COLOR)
@@ -377,7 +380,7 @@ class Game:
     self.agent_right.updateState(self.ball, self.agent_left)
     self.delayScreen = DelayScreen()
   def newMatch(self):
-    ball_vx = self.np_random.uniform(low=7, high=10) * (1 if self.np_random.random() < 0.5 else -1)
+    ball_vx = self.np_random.uniform(low=15, high=20) * (1 if self.np_random.random() < 0.5 else -1)
     ball_vy = self.np_random.uniform(low=-10, high=10)
     self.ball = Particle(0, REF_W/4, ball_vx, ball_vy, 0.5, c=BALL_COLOR);
     self.delayScreen.reset()
@@ -389,7 +392,7 @@ class Game:
     self.agent_right.update()
 
     if self.delayScreen.status():
-      self.ball.limitSpeed(0, MAX_BALL_SPEED)
+      #self.ball.limitSpeed(0, MAX_BALL_SPEED)
       self.ball.move()
 
     if (self.ball.isColliding(self.agent_left)):
