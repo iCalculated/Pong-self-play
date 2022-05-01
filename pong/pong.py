@@ -21,7 +21,7 @@ REF_WALL_WIDTH = 1.0 # wall width
 REF_WALL_HEIGHT = 3.5
 PLAYER_SPEED_X = 10*1.75
 PLAYER_SPEED_Y = 10*1.35
-MAX_BALL_SPEED = 15*1.5
+MAX_BALL_SPEED = 25
 TIMESTEP = 1/30.
 NUDGE = 0.1
 FRICTION = 1.0 # 1 means no FRICTION, less means FRICTION
@@ -181,13 +181,11 @@ class Particle:
   def bounce(self, p): # bounce two balls that have collided (this and that)
     self.vx *= -1
     aby = self.y-p.y+2
-    self.vy += aby
     self.vy += p.vy / 2
-    if abs(self.vx) > 30:
-        self.xv = 30 * np.sign(self.vx)
-    else:
-        self.vx *= 1.1
-        self.vy *= 1.1
+    velocity = np.sqrt(self.vx ** 2 + self.vy ** 2)
+    scalar = MAX_BALL_SPEED / velocity
+    self.vy *= scalar
+    self.vx *= scalar
     while(self.isColliding(p)):
       self.x -= NUDGE * np.sign(self.x)
     return
@@ -371,8 +369,8 @@ class Game:
     self.np_random = np_random
     self.reset()
   def reset(self):
-    ball_vx = self.np_random.uniform(low=15, high=20) * (1 if self.np_random.random() < 0.5 else -1)
-    ball_vy = self.np_random.uniform(low=-10, high=10)
+    ball_vx = 25 * (1 if self.np_random.random() < 0.5 else -1)
+    ball_vy = 0
     self.ball = Particle(0, REF_W/4, ball_vx, ball_vy, 0.5, c=BALL_COLOR);
     self.agent_left = Agent(-1, -REF_W/2, REF_H/2, c=AGENT_LEFT_COLOR)
     self.agent_right = Agent(1, REF_W/2, REF_H/2, c=AGENT_RIGHT_COLOR)
@@ -380,8 +378,8 @@ class Game:
     self.agent_right.updateState(self.ball, self.agent_left)
     self.delayScreen = DelayScreen()
   def newMatch(self):
-    ball_vx = self.np_random.uniform(low=15, high=20) * (1 if self.np_random.random() < 0.5 else -1)
-    ball_vy = self.np_random.uniform(low=-10, high=10)
+    ball_vx = 25 * (1 if self.np_random.random() < 0.5 else -1)
+    ball_vy = 0
     self.ball = Particle(0, REF_W/4, ball_vx, ball_vy, 0.5, c=BALL_COLOR);
     self.delayScreen.reset()
   def step(self):

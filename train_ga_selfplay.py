@@ -25,7 +25,7 @@ def mutate(length, mutation_rate, mutation_sigma):
   return mask * noise
 
 # Log results
-logdir = "ga_selfplay"
+logdir = "ga_selfplay_big"
 index = 0
 numbering = False
 while (os.path.exists(logdir) and not numbering) or os.path.exists(logdir + str(index)):
